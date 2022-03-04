@@ -15,9 +15,11 @@ class Ant:
         self.app.grid[self.y][self.x] = not value
 
         SIZE = self.app.CELL_SIZE
-        center = self.x * SIZE, self.y * SIZE
+        rect = self.x * SIZE, self.y * SIZE, SIZE - 1, SIZE - 1
         if value:
-            pg.draw.circle(self.app.screen, self.color, center, SIZE)
+            pg.draw.rect(self.app.screen, pg.Color('white'), rect)
+        else:
+            pg.draw.rect(self.app.screen, self.color, rect)
 
         self.increments.rotate(1) if value else self.increments.rotate(-1)
         dx, dy = self.increments[0]
@@ -26,7 +28,7 @@ class Ant:
 
 
 class App:
-    def __init__(self, WIDTH=1600, HEIGHT=900, CELL_SIZE=6):
+    def __init__(self, WIDTH=1600, HEIGHT=900, CELL_SIZE=8):
         pg.init()
         self.screen = pg.display.set_mode([WIDTH, HEIGHT])
         self.clock = pg.time.Clock()
@@ -35,13 +37,7 @@ class App:
         self.ROWS, self.COLS = HEIGHT // CELL_SIZE, WIDTH // CELL_SIZE
         self.grid = [[0 for col in range(self.COLS)] for row in range(self.ROWS)]
 
-        colors1 = [(50, 30, i) for i in range(256)]
-        colors2 = [(150, i, 120) for i in range(256)]
-        ants1 = [Ant(self, [self.COLS // 3, self.ROWS // 2],
-                     choice(colors1)) for i in range(400)]
-        ants2 = [Ant(self, [self.COLS - self.COLS // 3, self.ROWS // 2],
-                     choice(colors2)) for i in range(400)]
-        self.ants = ants1 + ants2
+        self.ants = [Ant(self, [randrange(self.COLS), randrange(self.ROWS)], self.get_color()) for i in range(15)]
 
     @staticmethod
     def get_color():
